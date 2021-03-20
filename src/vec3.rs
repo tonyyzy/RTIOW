@@ -7,6 +7,8 @@ use std::{
     },
 };
 
+use crate::rtweekend::{random, random_double};
+
 #[derive(Clone, Default, Copy)]
 pub struct Vec3 {
     x: f64,
@@ -56,6 +58,22 @@ impl Vec3 {
 
     pub fn unit_vector(&self) -> Self {
         self.clone() / self.length()
+    }
+
+    pub fn random() -> Self {
+        Self {
+            x: random(),
+            y: random(),
+            z: random(),
+        }
+    }
+
+    pub fn random_min_max(min: f64, max: f64) -> Self {
+        Self {
+            x: random_double(min, max),
+            y: random_double(min, max),
+            z: random_double(min, max),
+        }
     }
 }
 
@@ -218,17 +236,36 @@ pub fn write_color(
     pixel_color: &Color,
     samples_per_pixel: u32,
 ) -> std::io::Result<()> {
-    let Color {
-        x: r,
-        y: g,
-        z: b,
-    } = pixel_color.clone() / samples_per_pixel as f64;
+    let Color { x: r, y: g, z: b } =
+        pixel_color.clone() / samples_per_pixel as f64;
     write!(
         f,
         "{} {} {}\n",
-        (256.0 * r.clamp(0.0, 0.999)).trunc() as u8,
-        (256.0 * g.clamp(0.0, 0.999)).trunc() as u8,
-        (256.0 * b.clamp(0.0, 0.999)).trunc() as u8,
+        (256.0 * r.sqrt().clamp(0.0, 0.999)).trunc() as u8,
+        (256.0 * g.sqrt().clamp(0.0, 0.999)).trunc() as u8,
+        (256.0 * b.sqrt().clamp(0.0, 0.999)).trunc() as u8,
     )?;
     Ok(())
+}
+
+pub fn random_in_unit_sphere() -> Vec3 {
+    loop {
+        let p = Vec3::random_min_max(-1.0, 1.0);
+        if p.length_squared() < 1.0 {
+            return p;
+        }
+    }
+}
+
+pub fn random_unit_vector() -> Vec3 {
+    random_in_unit_sphere().unit_vector()
+}
+
+pub fn random_in_hemisphere(normal: &Vec3) -> Vec3{
+    let in_unit_sphere = random_in_unit_sphere();
+    if in_unit_sphere.dot(normal) > 0.0 {
+        return in_unit_sphere
+    } else {
+        return -in_unit_sphere
+    }
 }
