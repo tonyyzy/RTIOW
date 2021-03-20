@@ -75,6 +75,15 @@ impl Vec3 {
             z: random_double(min, max),
         }
     }
+
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+        self.x.abs() < s && self.y.abs() < s && self.z.abs() < s
+    }
+
+    pub fn reflect(&self, n: &Vec3) -> Self {
+        self - &(2.0 * self.dot(n) * *n)
+    }
 }
 
 impl Sub<Self> for Vec3 {
@@ -261,11 +270,11 @@ pub fn random_unit_vector() -> Vec3 {
     random_in_unit_sphere().unit_vector()
 }
 
-pub fn random_in_hemisphere(normal: &Vec3) -> Vec3{
+pub fn random_in_hemisphere(normal: &Vec3) -> Vec3 {
     let in_unit_sphere = random_in_unit_sphere();
     if in_unit_sphere.dot(normal) > 0.0 {
-        return in_unit_sphere
+        return in_unit_sphere;
     } else {
-        return -in_unit_sphere
+        return -in_unit_sphere;
     }
 }

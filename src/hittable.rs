@@ -1,14 +1,16 @@
 use std::rc::Rc;
 
 use crate::{
+    material::{Lambertian, Material},
     ray::Ray,
-    vec3::{Point3, Vec3},
+    vec3::{Color, Point3, Vec3},
 };
 
-#[derive(Default, Clone)]
+#[derive(Clone)]
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
+    pub mat: Rc<dyn Material>,
     pub t: f64,
     front_face: bool,
 }
@@ -19,6 +21,18 @@ impl HitRecord {
             *outward_normal
         } else {
             -*outward_normal
+        }
+    }
+}
+
+impl Default for HitRecord {
+    fn default() -> Self {
+        Self {
+            p: Point3::default(),
+            normal: Vec3::default(),
+            mat: Rc::new(Lambertian::new(Color::new(0.0, 0.0, 0.0))),
+            t: 0.0,
+            front_face: false,
         }
     }
 }
