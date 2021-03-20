@@ -213,13 +213,22 @@ impl Mul<Vec3> for f64 {
     }
 }
 
-pub fn write_color(f: &mut Stdout, color: &Color) -> std::io::Result<()> {
+pub fn write_color(
+    f: &mut Stdout,
+    pixel_color: &Color,
+    samples_per_pixel: u32,
+) -> std::io::Result<()> {
+    let Color {
+        x: r,
+        y: g,
+        z: b,
+    } = pixel_color.clone() / samples_per_pixel as f64;
     write!(
         f,
         "{} {} {}\n",
-        (255.999 * color.x).trunc() as u8,
-        (255.999 * color.y).trunc() as u8,
-        (255.999 * color.z).trunc() as u8
+        (256.0 * r.clamp(0.0, 0.999)).trunc() as u8,
+        (256.0 * g.clamp(0.0, 0.999)).trunc() as u8,
+        (256.0 * b.clamp(0.0, 0.999)).trunc() as u8,
     )?;
     Ok(())
 }
