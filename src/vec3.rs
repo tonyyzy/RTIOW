@@ -1,9 +1,13 @@
-use std::{fmt::Display, io::{Stdout, Write}, ops::{
-        Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul,
-        MulAssign, Neg, Sub,
-    }};
+use std::{
+    fmt::Display,
+    io::{Stdout, Write},
+    ops::{
+        Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg,
+        Sub,
+    },
+};
 
-#[derive(Clone)]
+#[derive(Clone, Default, Copy)]
 pub struct Vec3 {
     x: f64,
     y: f64,
@@ -52,16 +56,6 @@ impl Vec3 {
 
     fn unit_vector(&self) -> Self {
         self.clone() / self.length()
-    }
-}
-
-impl Default for Vec3 {
-    fn default() -> Self {
-        Self {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-        }
     }
 }
 
@@ -118,6 +112,18 @@ impl Add for Vec3 {
 
     fn add(self, rhs: Self) -> Self {
         Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl Add for &Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: Self) -> Vec3 {
+        Vec3 {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
