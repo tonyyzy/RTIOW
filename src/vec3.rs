@@ -71,6 +71,14 @@ impl Sub for Vec3 {
     }
 }
 
+impl Sub<&Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: &Vec3) -> Vec3 {
+        *self - *rhs
+    }
+}
+
 impl Neg for Vec3 {
     type Output = Self;
 
