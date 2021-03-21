@@ -182,7 +182,7 @@ impl AddAssign for Vec3 {
     }
 }
 
-impl Mul for Vec3 {
+impl Mul<Self> for Vec3 {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self {
