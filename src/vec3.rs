@@ -7,7 +7,7 @@ use std::{
     },
 };
 
-use crate::rtweekend::{random, random_double};
+use crate::rtweekend::{random, random_min_max};
 
 #[derive(Clone, Default, Copy)]
 pub struct Vec3 {
@@ -70,9 +70,9 @@ impl Vec3 {
 
     pub fn random_min_max(min: f64, max: f64) -> Self {
         Self {
-            x: random_double(min, max),
-            y: random_double(min, max),
-            z: random_double(min, max),
+            x: random_min_max(min, max),
+            y: random_min_max(min, max),
+            z: random_min_max(min, max),
         }
     }
 
@@ -284,5 +284,18 @@ pub fn random_in_hemisphere(normal: &Vec3) -> Vec3 {
         return in_unit_sphere;
     } else {
         return -in_unit_sphere;
+    }
+}
+
+pub fn random_in_unit_disk() -> Vec3 {
+    loop {
+        let p = Vec3::new(
+            random_min_max(-1.0, 1.0),
+            random_min_max(-1.0, 1.0),
+            0.0,
+        );
+        if p.length_squared() < 1.0 {
+            return p;
+        }
     }
 }
