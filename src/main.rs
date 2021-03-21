@@ -56,7 +56,7 @@ fn main() -> io::Result<()> {
     )));
     world.add(Rc::new(Sphere::new(
         Point3::new(-1.0, 0.0, -1.0),
-        -0.4,
+        -0.45,
         material_left.clone(),
     )));
     world.add(Rc::new(Sphere::new(
@@ -66,7 +66,13 @@ fn main() -> io::Result<()> {
     )));
 
     // Camera
-    let camera = Camera::default();
+    let camera = Camera::new(
+        Point3::new(-2.0, 2.0, 1.0),
+        Point3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        20.0,
+        aspect_ratio,
+    );
 
     // Render
     write!(stdout, "P3\n{} {}\n255\n", image_width, image_height)?;
