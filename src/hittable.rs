@@ -12,12 +12,13 @@ pub struct HitRecord {
     pub normal: Vec3,
     pub mat: Rc<dyn Material>,
     pub t: f64,
-    front_face: bool,
+    pub front_face: bool,
 }
 
 impl HitRecord {
     pub fn set_face_normal(&mut self, r: &Ray, outward_normal: &Vec3) {
-        self.normal = if r.direction().dot(outward_normal) < 0.0 {
+        self.front_face = r.direction().dot(outward_normal) < 0.0;
+        self.normal = if self.front_face {
             *outward_normal
         } else {
             -*outward_normal
@@ -32,7 +33,7 @@ impl Default for HitRecord {
             normal: Vec3::default(),
             mat: Rc::new(Lambertian::new(Color::new(0.0, 0.0, 0.0))),
             t: 0.0,
-            front_face: false,
+            front_face: true,
         }
     }
 }

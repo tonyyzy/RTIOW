@@ -41,7 +41,7 @@ impl Vec3 {
     }
 
     pub fn length_squared(&self) -> f64 {
-        self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0)
+        self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
     }
 
     pub fn dot(&self, rhs: &Vec3) -> f64 {
@@ -83,6 +83,14 @@ impl Vec3 {
 
     pub fn reflect(&self, n: &Vec3) -> Self {
         self - &(2.0 * self.dot(n) * *n)
+    }
+
+    pub fn refract(&self, n: &Vec3, etai_over_etat: f64) -> Self {
+        let cos_theta = (-(*self)).dot(n).min(1.0);
+        let r_out_perp = etai_over_etat * (*self + (cos_theta * *n));
+        let r_out_parallel =
+            (-(1.0 - r_out_perp.length_squared()).abs().sqrt()) * *n;
+        r_out_perp + r_out_parallel
     }
 }
 
@@ -142,7 +150,7 @@ impl IndexMut<usize> for Vec3 {
     }
 }
 
-impl Add for Vec3 {
+impl Add<Self> for Vec3 {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self {
@@ -154,7 +162,7 @@ impl Add for Vec3 {
     }
 }
 
-impl Add for &Vec3 {
+impl Add<Self> for &Vec3 {
     type Output = Vec3;
 
     fn add(self, rhs: Self) -> Vec3 {
@@ -198,6 +206,14 @@ impl Mul<f64> for Vec3 {
     }
 }
 
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        rhs * self
+    }
+}
+
 impl MulAssign<f64> for Vec3 {
     fn mul_assign(&mut self, rhs: f64) {
         self.x *= rhs;
@@ -229,14 +245,6 @@ impl DivAssign<f64> for Vec3 {
 impl Display for Point3 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} {} {}", self.x, self.y, self.z)
-    }
-}
-
-impl Mul<Vec3> for f64 {
-    type Output = Vec3;
-
-    fn mul(self, rhs: Vec3) -> Self::Output {
-        rhs * self
     }
 }
 
